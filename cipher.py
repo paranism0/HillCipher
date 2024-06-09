@@ -17,8 +17,11 @@ def preprocess_inputs(message, key, n, p):
 
 
 def hill_cipher_decryption(encrypted_msg_matrix, key_matrix):
+    inverse = calc_inverse_matrix(key_matrix)
+    if isinstance(inverse, bool) and inverse == False:
+        return inverse
     cipher_matrix = simple_multiple(
-        calc_inverse_matrix(key_matrix),
+        inverse,
         encrypted_msg_matrix
     )
     for i in range(len(cipher_matrix)):
@@ -30,6 +33,9 @@ def hill_cipher_decryption(encrypted_msg_matrix, key_matrix):
 
 
 def hill_cipher_encryption(message_matrix, key_matrix):
+    inverse = calc_inverse_matrix(key_matrix)
+    if isinstance(inverse, bool) and inverse == False:
+        return inverse
     cipher_matrix = simple_multiple(
         key_matrix,
         message_matrix

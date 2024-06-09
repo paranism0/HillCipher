@@ -1,7 +1,7 @@
 from math import sqrt, ceil
 from constants import alphabets
 import numpy as np
-import copy
+from mathmatrix import Matrix
 
 
 def modInverse(A, M):
@@ -27,31 +27,6 @@ def gcd(a, b):
     if (a == 0):
         return b
     return gcd(b % a, a)
-
-
-def get_comatrix(matrix, n):
-    inverse = np.array([[0 for x in range(n)] for y in range(n)])
-    for i in range(n):
-        for j in range(n):
-            adj = [[0 for x in range(n-1)] for y in range(n-1)]
-            row_index = col_index = 0
-            for row in range(n):
-                if (row == i):
-                    continue
-                col_index = 0
-                for col in range(n):
-                    if (col == j):
-                        continue
-                    adj[row_index][col_index] = matrix[row][col]
-                    col_index += 1
-                row_index += 1
-            adj_det = determinant_gauss_jordan(adj, n-1)
-            inverse[i][j] = pow(-1, i+j) * adj_det
-    temp = copy.deepcopy(inverse)
-    for i in range(n):
-        for j in range(n):
-            inverse[i][j] = temp[j][i]
-    return inverse
 
 
 def determinant_gauss_jordan(m, n):
@@ -90,42 +65,19 @@ def determinant_gauss_jordan(m, n):
     return det
 
 
-# we don't use it because of its complexity
-
-def calculate_det_laplace(m, n):
-    if (n < 0):
-        print("index out of bound")
-        return
-    det = 0
-    if (n == 1):
-        det = m[0]
-        return det
-    if (n == 2):
-        det = (m[0][0] * m[1][1]) - (m[0][1] * m[1][0])
-        return det
-    new_m = [[0 for x in range(n-1)] for y in range(n-1)]
-    for k in range(n):
-        for i in range(n):
-            col_index = 0
-            for j in range(n):
-                if (i == 0 or j == k):
-                    continue
-                new_m[i-1][col_index] = m[i][j]
-                col_index += 1
-        det += m[0][k] * pow(-1, 1+(k+1)) * calculate_det_laplace(new_m, n-1)
-    return det
-
-####
-
-
 def calc_inverse_matrix(matrix):
     n = len(matrix)
     det = round(determinant_gauss_jordan(matrix, n)) % 71
-    adj = get_comatrix(matrix, n) % 71
+    if det == 0:
+        return False
     inv = modInverse(
         det,
         71
     )
+    if inv == -1:
+        return False
+    adj = Matrix(n, n, matrix).adjoint()
+    adj = np.array([[adj[i][j] for j in range(n)] for i in range(n)]) % 71
     return (inv*adj) % 71
 
 
