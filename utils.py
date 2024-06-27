@@ -2,6 +2,7 @@ from math import sqrt, ceil
 from constants import alphabets
 import numpy as np
 from mathmatrix import Matrix
+from determinant.dets import determinant_gauss_jordan, determinant_laplace, determinant_rezaeifar
 
 
 def modInverse(A, M):
@@ -29,47 +30,17 @@ def gcd(a, b):
     return gcd(b % a, a)
 
 
-def determinant_gauss_jordan(m, n):
-    # Convert the input matrix to a NumPy array
-    mat = np.array(m, dtype=float)
-
-    # Initialize the determinant as 1
-    det = 1.0
-
-    for i in range(n):
-        # Find the maximum element in the current column
-        max_row = i + np.argmax(np.abs(mat[i:, i]))
-
-        # If the maximum element is 0, the determinant is 0
-        if mat[max_row, i] == 0:
-            return 0
-
-        # Swap the current row with the row of the maximum element
-        if i != max_row:
-            # print("mat before = \n", mat)
-            mat[[i, max_row]] = mat[[max_row, i]]
-            # print("mat after = \n", mat)
-            # print(mat[[max_row, i]])
-            det *= -1  # Swapping rows changes the sign of the determinant
-
-        # Multiply the determinant by the pivot element
-        det *= mat[i, i]
-
-        # Normalize the pivot row
-        mat[i] /= mat[i, i]
-
-        # Eliminate the current column elements below the pivot
-        for j in range(i + 1, n):
-            mat[j] -= mat[j, i] * mat[i]
-
-    return det
-
-
 def calc_inverse_matrix(matrix):
     n = len(matrix)
+    # time complexity of O(n^3) and a space complexity of O(n^2)
     det = round(determinant_gauss_jordan(matrix, n)) % 71
+    # time complexity of O(n!) and a space complexity of O(n)
+    # det = round(determinant_laplace(matrix, n)) % 71
+    # time complexity of O(n!) and a space complexity of O(n)
+    # det = round(determinant_rezaeifar(matrix, n)) % 71
     if det == 0:
         return False
+    # (x * det) mod by 71 = 1 -> here minimum number of x is our inverse
     inv = modInverse(
         det,
         71

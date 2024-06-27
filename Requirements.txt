@@ -1,0 +1,5 @@
+numpy==1.26.4
+PyQt5==5.15.10
+PyQt5-Qt5==5.15.2
+PyQt-Qwt==1.2.2
+mathmatrix==0.5
