@@ -2,7 +2,7 @@ from math import sqrt, ceil
 from constants import alphabets
 import numpy as np
 from mathmatrix import Matrix
-from determinant.dets import determinant_gauss_jordan, determinant_laplace, determinant_rezaeifar
+from determinant.Gauss_Jordan import determinant_gauss_jordan
 
 
 def modInverse(A, M):
@@ -32,12 +32,9 @@ def gcd(a, b):
 
 def calc_inverse_matrix(matrix):
     n = len(matrix)
-    # time complexity of O(n^3) and a space complexity of O(n^2)
+
     det = round(determinant_gauss_jordan(matrix, n)) % 71
-    # time complexity of O(n!) and a space complexity of O(n)
-    # det = round(determinant_laplace(matrix, n)) % 71
-    # time complexity of O(n!) and a space complexity of O(n)
-    # det = round(determinant_rezaeifar(matrix, n)) % 71
+
     if det == 0:
         return False
     # (x * det) mod by 71 = 1 -> here minimum number of x is our inverse
