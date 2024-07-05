@@ -1,34 +1,46 @@
-import numpy as np
-
-
-def determinant_gauss_jordan(m, n):
-    # Convert the input matrix to a NumPy array
-    mat = np.array(m, dtype=float)
-
-    # Initialize the determinant as 1
-    det = 1.0
+def calculate_det(n, m):
+    det = 1
 
     for i in range(n):
-        # Find the maximum element in the current column
-        max_row = i + np.argmax(np.abs(mat[i:, i]))
+        # Search for maximum in this column
+        max_elem = abs(m[i][i])
+        max_row = i
+        for k in range(i + 1, n):
+            if abs(m[k][i]) > max_elem:
+                max_elem = abs(m[k][i])
+                max_row = k
 
-        # If the maximum element is 0, the determinant is 0
-        if mat[max_row, i] == 0:
-            return 0
+        # Swap maximum row with current row if needed
+        if max_row != i:
+            m[i], m[max_row] = m[max_row], m[i]
+            det *= -1  
 
-        # Swap the current row with the row of the maximum element
-        if i != max_row:
-            mat[[i, max_row]] = mat[[max_row, i]]
-            det *= -1  # Swapping rows changes the sign of the determinant
+        # Make all rows below this one 0 in current column
+        for k in range(i + 1, n):
+            if m[i][i] == 0:
+                return 0
+            factor = m[k][i] / m[i][i]
+            for j in range(i, n):
+                m[k][j] -= factor * m[i][j]
 
-        # Multiply the determinant by the pivot element
-        det *= mat[i, i]
-
-        # Normalize the pivot row
-        mat[i] /= mat[i, i]
-
-        # Eliminate the current column elements below the pivot
-        for j in range(i + 1, n):
-            mat[j] -= mat[j, i] * mat[i]
+    # Multiply diagonal elements to get determinant
+    for i in range(n):
+        det *= m[i][i]
 
     return det
+
+
+
+n = int(input())
+
+m = [[0 for x in range(n)] for y in range(n)]
+
+for i in range(n):
+    line = input()
+    row = line.split()
+    for j in range(n):
+        m[i][j] = float(row[j])
+
+determinant = calculate_det(n, m)
+print(f"{determinant:.2f}")
+

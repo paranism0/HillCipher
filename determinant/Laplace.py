@@ -1,12 +1,8 @@
-def calculate_det(m, n):
-
-    if (n < 0):
-        print("index out of bound")
-        return
+def calculate_det(n, m):
 
     det = 0
     if (n == 1):
-        det = m[0]
+        det = m[0][0]
         return det
 
     if (n == 2):
@@ -25,6 +21,21 @@ def calculate_det(m, n):
                 new_m[i-1][col_index] = m[i][j]
                 col_index += 1
 
-        det += m[0][k] * pow(-1, 1+(k+1)) * calculate_det(new_m, n-1)
+        det += m[0][k] * pow(-1, 1+(k+1)) * calculate_det(n-1, new_m)
 
     return det
+
+
+
+n = int(input())
+
+m = [[0 for x in range(n)] for y in range(n)]
+
+for i in range(n):
+    line = input()
+    row = line.split()
+    for j in range(n):
+        m[i][j] = float(row[j])
+
+determinant = calculate_det(n, m)
+print(f"{determinant:.2f}")
