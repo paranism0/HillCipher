@@ -1,8 +1,8 @@
 from PyQt5 import QtWidgets, uic
-from cipher import hill_cipher_encryption, preprocess_inputs, hill_cipher_decryption
-from utils import check_key, check_msg
 import sys
-
+from encryption import check_key , check_msg , hill_cipher_encryption , \
+    convert_str_to_matrix
+from decryption import hill_cipher_decryption , check_key_matrix
 
 class Ui(QtWidgets.QMainWindow):
     def __init__(self):
@@ -38,17 +38,14 @@ class Ui(QtWidgets.QMainWindow):
     def encrypt_message(self):
         msg = self.get_message()
         key = self.get_key()
-        if "~" in msg:
-            self.showerror("you can't use ~ in your message")
-            exit()
-        elif "~" in key:
-            self.showerror("you can't use ~ in your key")
+        if "_"==msg[-1]:
+            self.showerror("you can't use _ as your last character in message")
             exit()
         key, n = check_key(key)
         msg, p = check_msg(msg, n)
-        enc_text = hill_cipher_encryption(
-            *preprocess_inputs(msg, key, n, p))
-        if enc_text != False:
+        key = convert_str_to_matrix(key,n,n,msg=False)
+        if check_key_matrix(key)!="NO_VALID_KEY":
+            enc_text = hill_cipher_encryption(convert_str_to_matrix(msg,p,n),key)
             self.result.setText("encrypted Text : " + enc_text)
         else:
             self.showerror("Invalid Key!")
@@ -58,9 +55,10 @@ class Ui(QtWidgets.QMainWindow):
         key = self.get_key()
         key, n = check_key(key)
         msg, p = check_msg(msg, n)
-        dec_text = hill_cipher_decryption(
-            *preprocess_inputs(msg, key, n, p))
-        if dec_text != False:
+        key = convert_str_to_matrix(key,n,n,msg=False)
+        inverse = check_key_matrix(key)
+        if inverse!="NO_VALID_KEY":
+            dec_text = hill_cipher_decryption(convert_str_to_matrix(msg,p,n),inverse)
             self.result.setText("decrypted Text : " + dec_text)
         else:
             self.showerror("Invalid Key!")
