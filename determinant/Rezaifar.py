@@ -1,7 +1,4 @@
 def calculate_det(n, m):
-    if (n < 0):
-        print("index out of bound")
-        return
 
     det = 0
     if (n == 1):
@@ -12,60 +9,44 @@ def calculate_det(n, m):
         det = (m[0][0] * m[1][1]) - (m[0][1] * m[1][0])
         return det
 
-    m_11 = [[0 for x in range(n-1)] for y in range(n-1)]
+    m_11 = [[m[i][j] for j in range(n) if j != 0] for i in range(n) if i != 0]
+    m_1n = [[m[i][j] for j in range(n) if j != n-1] for i in range(n) if i != 0]
+    m_n1 = [[m[i][j] for j in range(n) if j != 0] for i in range(n) if i != n-1]
+    m_nn = [[m[i][j] for j in range(n) if j != n-1] for i in range(n) if i != n-1]
+    m_11_nn = [[m[i][j] for j in range(n) if (j != 0 and j != n-1)] for i in range(n) if (i != 0 and i != n-1)]
 
-    for i in range(n):
-        col_index = 0
-        for j in range(n):
-            if (i == 0 or j == 0):
-                continue
-            m_11[i-1][col_index] = m[i][j]
-            col_index += 1
 
-    m_1n = [[0 for x in range(n-1)] for y in range(n-1)]
+    dt = calculate_det(n-2, m_11_nn)
 
-    for i in range(n):
-        col_index = 0
-        for j in range(n):
-            if (i == 0 or j == n-1):
-                continue
-            m_1n[i-1][col_index] = m[i][j]
-            col_index += 1
+    if dt == 0:
 
-    m_n1 = [[0 for x in range(n-1)] for y in range(n-1)]
+        factor = 1
+        for i in range(0,n-1,2):
+            m[i], m[i+1] = m[i+1], m[i]
+            factor *= -1
+                            
+                    
+        m_11 = [[m[i][j] for j in range(n) if j != 0] for i in range(n) if i != 0]
+        m_1n = [[m[i][j] for j in range(n) if j != n-1] for i in range(n) if i != 0]
+        m_n1 = [[m[i][j] for j in range(n) if j != 0] for i in range(n) if i != n-1]
+        m_nn = [[m[i][j] for j in range(n) if j != n-1] for i in range(n) if i != n-1]
+        m_11_nn = [[m[i][j] for j in range(n) if (j != 0 and j != n-1)] for i in range(n) if (i != 0 and i != n-1)]
 
-    for i in range(n):
-        col_index = 0
-        for j in range(n):
-            if (i == n-1 or j == 0):
-                continue
-            m_n1[i][col_index] = m[i][j]
-            col_index += 1
+        dt = calculate_det(n-2, m_11_nn)
+        if dt == 0:
+            return 0
 
-    m_nn = [[0 for x in range(n-1)] for y in range(n-1)]
+        dt *= factor
 
-    for i in range(n):
-        col_index = 0
-        for j in range(n):
-            if (i == n-1 or j == n-1):
-                continue
-            m_nn[i][col_index] = m[i][j]
-            col_index += 1
 
-    m_11_nn = [[0 for x in range(n-2)] for y in range(n-2)]
 
-    for i in range(n-1):
-        col_index = 0
-        for j in range(n-1):
-            if (i == 0 or j == 0):
-                continue
-            m_11_nn[i-1][col_index] = m_nn[i][j]
-            col_index += 1
-
+    
     det = ((calculate_det(n-1, m_11) * calculate_det(n-1, m_nn)) -
-           (calculate_det(n-1, m_1n) * calculate_det(n-1, m_n1))) / (calculate_det(n-2, m_11_nn))
+           (calculate_det(n-1, m_1n) * calculate_det(n-1, m_n1))) / dt
 
     return det
+
+
 
 
 
@@ -79,5 +60,6 @@ for i in range(n):
     for j in range(n):
         m[i][j] = float(row[j])
 
-determinant = calculate_det(n, m)
-print(f"{determinant:.2f}")
+determinant = int(calculate_det(n, m))
+print(determinant)
+

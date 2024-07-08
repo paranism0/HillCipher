@@ -37,5 +37,5 @@ for i in range(n):
     for j in range(n):
         m[i][j] = float(row[j])
 
-determinant = calculate_det(n, m)
-print(f"{determinant:.2f}")
+determinant = int(calculate_det(n, m))
+print(determinant)
